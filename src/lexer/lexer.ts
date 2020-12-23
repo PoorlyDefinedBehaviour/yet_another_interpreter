@@ -2,15 +2,21 @@ import {
   assign,
   comma,
   eof,
+  greaterThan,
   illegal,
   leftBrace,
   leftParen,
+  lessThan,
   lookupIdentifier,
+  minus,
   number,
   plus,
   rightBrace,
   rightParen,
   semicolon,
+  slash,
+  star,
+  bang,
   Token,
 } from "./token"
 
@@ -96,6 +102,18 @@ export class Lexer {
       token = leftBrace()
     } else if (this.currentCharacter === "}") {
       token = rightBrace()
+    } else if (this.currentCharacter === "-") {
+      token = minus()
+    } else if (this.currentCharacter === "*") {
+      token = star()
+    } else if (this.currentCharacter === "/") {
+      token = slash()
+    } else if (this.currentCharacter === "<") {
+      token = lessThan()
+    } else if (this.currentCharacter === ">") {
+      token = greaterThan()
+    } else if (this.currentCharacter === "!") {
+      token = bang()
     } else if (this.currentCharacter === "") {
       token = eof()
     } else {

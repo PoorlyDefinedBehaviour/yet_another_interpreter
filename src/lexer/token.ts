@@ -13,6 +13,12 @@ export enum TokenType {
   rightBrace = "rightBrace",
   fn = "fn",
   let = "let",
+  minus = "minus",
+  bang = "bang",
+  star = "star",
+  slash = "slash",
+  lessThan = "<",
+  greaterThan = ">",
 }
 
 export type Token =
@@ -31,6 +37,12 @@ export type Token =
   | { type: TokenType.fn; value: string }
   | { type: TokenType.let }
   | { type: TokenType.plus }
+  | { type: TokenType.minus }
+  | { type: TokenType.slash }
+  | { type: TokenType.star }
+  | { type: TokenType.lessThan }
+  | { type: TokenType.greaterThan }
+  | { type: TokenType.bang }
 
 export const identifier = (value: string): Token => ({
   type: TokenType.identifier,
@@ -86,3 +98,15 @@ export const lookupIdentifier = (ident: string): Token => {
 
   return identifier(ident)
 }
+
+export const minus = (): Token => ({ type: TokenType.minus })
+
+export const slash = (): Token => ({ type: TokenType.slash })
+
+export const star = (): Token => ({ type: TokenType.star })
+
+export const lessThan = (): Token => ({ type: TokenType.lessThan })
+
+export const greaterThan = (): Token => ({ type: TokenType.greaterThan })
+
+export const bang = (): Token => ({ type: TokenType.bang })

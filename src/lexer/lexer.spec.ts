@@ -1,18 +1,24 @@
 import { Lexer } from "./lexer"
 import {
   assign,
+  bang,
   comma,
   eof,
   fn,
+  greaterThan,
   identifier,
   leftBrace,
   leftParen,
+  lessThan,
   letDeclaration,
+  minus,
   number,
   plus,
   rightBrace,
   rightParen,
   semicolon,
+  slash,
+  star,
 } from "./token"
 
 describe("Lexer test suite", () => {
@@ -43,6 +49,8 @@ describe("Lexer test suite", () => {
         x + y;
       }
       let result = add(five, ten);
+      !-/*5;
+      5 < 10 > 5;
     `
     const lexer = new Lexer(input)
 
@@ -81,6 +89,18 @@ describe("Lexer test suite", () => {
       comma(),
       identifier("ten"),
       rightParen(),
+      semicolon(),
+      bang(),
+      minus(),
+      slash(),
+      star(),
+      number("5"),
+      semicolon(),
+      number("5"),
+      lessThan(),
+      number("10"),
+      greaterThan(),
+      number("5"),
       semicolon(),
       eof(),
     ]
