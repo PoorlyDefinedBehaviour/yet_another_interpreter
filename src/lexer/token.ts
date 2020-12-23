@@ -24,6 +24,8 @@ export enum TokenType {
   if = "if",
   else = "else",
   return = "return",
+  equal = "==",
+  notEqual = "!=",
 }
 
 export type Token =
@@ -53,6 +55,8 @@ export type Token =
   | { type: TokenType.if }
   | { type: TokenType.else }
   | { type: TokenType.return }
+  | { type: TokenType.equal }
+  | { type: TokenType.notEqual }
 
 export const identifier = (value: string): Token => ({
   type: TokenType.identifier,
@@ -123,6 +127,14 @@ export const elseExpression = (): Token => ({
 
 export const returnStatement = (): Token => ({
   type: TokenType.return,
+})
+
+export const equal = (): Token => ({
+  type: TokenType.equal,
+})
+
+export const notEqual = (): Token => ({
+  type: TokenType.notEqual,
 })
 
 export const lookupIdentifier = (ident: string): Token => {

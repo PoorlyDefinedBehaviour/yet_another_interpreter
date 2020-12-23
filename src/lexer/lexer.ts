@@ -18,6 +18,8 @@ import {
   star,
   bang,
   Token,
+  equal,
+  notEqual,
 } from "./token"
 
 export class Lexer {
@@ -79,6 +81,14 @@ export class Lexer {
     return this.sourceCode.slice(numberStartsAt, this.position)
   }
 
+  private peekCharacter = (offset = 0) => {
+    if (this.nextPosition >= this.sourceCode.length) {
+      return ""
+    }
+
+    return this.sourceCode[this.nextPosition + offset]
+  }
+
   public nextToken = (): Token => {
     let token: Token
 
@@ -87,7 +97,12 @@ export class Lexer {
     console.log("this.currentCharacter", this.currentCharacter)
 
     if (this.currentCharacter === "=") {
-      token = assign()
+      if (this.peekCharacter() === "=") {
+        this.readCharacter()
+        token = equal()
+      } else {
+        token = assign()
+      }
     } else if (this.currentCharacter === ";") {
       token = semicolon()
     } else if (this.currentCharacter === "(") {
@@ -113,7 +128,12 @@ export class Lexer {
     } else if (this.currentCharacter === ">") {
       token = greaterThan()
     } else if (this.currentCharacter === "!") {
-      token = bang()
+      if (this.peekCharacter() === "=") {
+        this.readCharacter()
+        token = notEqual()
+      } else {
+        token = bang()
+      }
     } else if (this.currentCharacter === "") {
       token = eof()
     } else {

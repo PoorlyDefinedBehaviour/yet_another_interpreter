@@ -6,6 +6,7 @@ import {
   comma,
   elseExpression,
   eof,
+  equal,
   fn,
   greaterThan,
   identifier,
@@ -15,6 +16,7 @@ import {
   lessThan,
   letDeclaration,
   minus,
+  notEqual,
   number,
   plus,
   returnStatement,
@@ -27,7 +29,7 @@ import {
 } from "./token"
 
 describe("Lexer test suite", () => {
-  test("can parse simple tokens", () => {
+  test("can tokenize simple tokens", () => {
     const lexer = new Lexer("=+(){},;")
 
     const expectedTokens = [
@@ -46,7 +48,7 @@ describe("Lexer test suite", () => {
     }
   })
 
-  test("can parse source code", () => {
+  test("can tokenize source code", () => {
     const input = `
       let five = 5;
       let ten = 10;
@@ -183,6 +185,31 @@ describe("Lexer test suite", () => {
       rightBrace(),
       returnStatement(),
       number("32"),
+      semicolon(),
+      eof(),
+    ]
+
+    for (const token of expectedTokens) {
+      expect(lexer.nextToken()).toEqual(token)
+    }
+  })
+
+  test("tokens that are more than one character", () => {
+    const input = `
+      10 == 10;
+      10 != 9;
+    `
+
+    const lexer = new Lexer(input)
+
+    const expectedTokens = [
+      number("10"),
+      equal(),
+      number("10"),
+      semicolon(),
+      number("10"),
+      notEqual(),
+      number("9"),
       semicolon(),
       eof(),
     ]
