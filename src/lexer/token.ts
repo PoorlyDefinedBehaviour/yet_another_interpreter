@@ -19,6 +19,11 @@ export enum TokenType {
   slash = "slash",
   lessThan = "<",
   greaterThan = ">",
+  true = "true",
+  false = "false",
+  if = "if",
+  else = "else",
+  return = "return",
 }
 
 export type Token =
@@ -34,7 +39,7 @@ export type Token =
   | { type: TokenType.rightParen }
   | { type: TokenType.leftBrace }
   | { type: TokenType.rightBrace }
-  | { type: TokenType.fn; value: string }
+  | { type: TokenType.fn }
   | { type: TokenType.let }
   | { type: TokenType.plus }
   | { type: TokenType.minus }
@@ -43,6 +48,11 @@ export type Token =
   | { type: TokenType.lessThan }
   | { type: TokenType.greaterThan }
   | { type: TokenType.bang }
+  | { type: TokenType.true }
+  | { type: TokenType.false }
+  | { type: TokenType.if }
+  | { type: TokenType.else }
+  | { type: TokenType.return }
 
 export const identifier = (value: string): Token => ({
   type: TokenType.identifier,
@@ -77,9 +87,8 @@ export const leftBrace = (): Token => ({ type: TokenType.leftBrace })
 
 export const rightBrace = (): Token => ({ type: TokenType.rightBrace })
 
-export const fn = (functionName: string): Token => ({
+export const fn = (): Token => ({
   type: TokenType.fn,
-  value: functionName,
 })
 
 export const letDeclaration = (): Token => ({
@@ -87,17 +96,6 @@ export const letDeclaration = (): Token => ({
 })
 
 export const plus = (): Token => ({ type: TokenType.plus })
-
-export const lookupIdentifier = (ident: string): Token => {
-  if (ident === TokenType.fn) {
-    return fn(ident)
-  }
-  if (ident === TokenType.let) {
-    return letDeclaration()
-  }
-
-  return identifier(ident)
-}
 
 export const minus = (): Token => ({ type: TokenType.minus })
 
@@ -110,3 +108,42 @@ export const lessThan = (): Token => ({ type: TokenType.lessThan })
 export const greaterThan = (): Token => ({ type: TokenType.greaterThan })
 
 export const bang = (): Token => ({ type: TokenType.bang })
+
+export const bool = (value: TokenType.true | TokenType.false): Token => ({
+  type: value,
+})
+
+export const ifExpression = (): Token => ({
+  type: TokenType.if,
+})
+
+export const elseExpression = (): Token => ({
+  type: TokenType.else,
+})
+
+export const returnStatement = (): Token => ({
+  type: TokenType.return,
+})
+
+export const lookupIdentifier = (ident: string): Token => {
+  if (ident === TokenType.fn) {
+    return fn()
+  }
+  if (ident === TokenType.let) {
+    return letDeclaration()
+  }
+  if (ident === TokenType.true || ident === TokenType.false) {
+    return bool(ident)
+  }
+  if (ident === TokenType.if) {
+    return ifExpression()
+  }
+  if (ident === TokenType.else) {
+    return elseExpression()
+  }
+  if (ident === TokenType.return) {
+    return returnStatement()
+  }
+
+  return identifier(ident)
+}

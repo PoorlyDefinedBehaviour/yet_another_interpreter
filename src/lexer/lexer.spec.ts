@@ -2,11 +2,14 @@ import { Lexer } from "./lexer"
 import {
   assign,
   bang,
+  bool,
   comma,
+  elseExpression,
   eof,
   fn,
   greaterThan,
   identifier,
+  ifExpression,
   leftBrace,
   leftParen,
   lessThan,
@@ -14,11 +17,13 @@ import {
   minus,
   number,
   plus,
+  returnStatement,
   rightBrace,
   rightParen,
   semicolon,
   slash,
   star,
+  TokenType,
 } from "./token"
 
 describe("Lexer test suite", () => {
@@ -41,7 +46,7 @@ describe("Lexer test suite", () => {
     }
   })
 
-  test("can parse well formed source code", () => {
+  test("can parse source code", () => {
     const input = `
       let five = 5;
       let ten = 10;
@@ -68,7 +73,7 @@ describe("Lexer test suite", () => {
       letDeclaration(),
       identifier("add"),
       assign(),
-      fn("fn"),
+      fn(),
       leftParen(),
       identifier("x"),
       comma(),
@@ -101,6 +106,83 @@ describe("Lexer test suite", () => {
       number("10"),
       greaterThan(),
       number("5"),
+      semicolon(),
+      eof(),
+    ]
+
+    for (const token of expectedTokens) {
+      expect(lexer.nextToken()).toEqual(token)
+    }
+  })
+
+  test("if expressions", () => {
+    const input = `
+      if(5 < 10){
+        true;
+      } else {
+        false;
+      }
+    `
+
+    const lexer = new Lexer(input)
+
+    const expectedTokens = [
+      ifExpression(),
+      leftParen(),
+      number("5"),
+      lessThan(),
+      number("10"),
+      rightParen(),
+      leftBrace(),
+      bool(TokenType.true),
+      semicolon(),
+      rightBrace(),
+      elseExpression(),
+      leftBrace(),
+      bool(TokenType.false),
+      semicolon(),
+      rightBrace(),
+      eof(),
+    ]
+
+    for (const token of expectedTokens) {
+      expect(lexer.nextToken()).toEqual(token)
+    }
+  })
+
+  test("return", () => {
+    const input = `
+    if(5 < 10){
+      return true;
+    } else {
+      return false;
+    }
+
+    return 32;
+  `
+
+    const lexer = new Lexer(input)
+
+    const expectedTokens = [
+      ifExpression(),
+      leftParen(),
+      number("5"),
+      lessThan(),
+      number("10"),
+      rightParen(),
+      leftBrace(),
+      returnStatement(),
+      bool(TokenType.true),
+      semicolon(),
+      rightBrace(),
+      elseExpression(),
+      leftBrace(),
+      returnStatement(),
+      bool(TokenType.false),
+      semicolon(),
+      rightBrace(),
+      returnStatement(),
+      number("32"),
       semicolon(),
       eof(),
     ]
