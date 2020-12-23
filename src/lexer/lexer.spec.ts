@@ -30,7 +30,7 @@ import {
 
 describe("Lexer test suite", () => {
   test("can tokenize simple tokens", () => {
-    const lexer = new Lexer("=+(){},;")
+    const lexer = new Lexer()
 
     const expectedTokens = [
       assign(),
@@ -41,11 +41,10 @@ describe("Lexer test suite", () => {
       rightBrace(),
       comma(),
       semicolon(),
+      eof(),
     ]
 
-    for (const token of expectedTokens) {
-      expect(lexer.nextToken()).toEqual(token)
-    }
+    expect(lexer.lex("=+(){},;")).toEqual(expectedTokens)
   })
 
   test("can tokenize source code", () => {
@@ -59,7 +58,7 @@ describe("Lexer test suite", () => {
       !-/*5;
       5 < 10 > 5;
     `
-    const lexer = new Lexer(input)
+    const lexer = new Lexer()
 
     const expectedTokens = [
       letDeclaration(),
@@ -112,9 +111,7 @@ describe("Lexer test suite", () => {
       eof(),
     ]
 
-    for (const token of expectedTokens) {
-      expect(lexer.nextToken()).toEqual(token)
-    }
+    expect(lexer.lex(input)).toEqual(expectedTokens)
   })
 
   test("if expressions", () => {
@@ -126,7 +123,7 @@ describe("Lexer test suite", () => {
       }
     `
 
-    const lexer = new Lexer(input)
+    const lexer = new Lexer()
 
     const expectedTokens = [
       ifExpression(),
@@ -147,9 +144,7 @@ describe("Lexer test suite", () => {
       eof(),
     ]
 
-    for (const token of expectedTokens) {
-      expect(lexer.nextToken()).toEqual(token)
-    }
+    expect(lexer.lex(input)).toEqual(expectedTokens)
   })
 
   test("return", () => {
@@ -163,7 +158,7 @@ describe("Lexer test suite", () => {
     return 32;
   `
 
-    const lexer = new Lexer(input)
+    const lexer = new Lexer()
 
     const expectedTokens = [
       ifExpression(),
@@ -189,9 +184,7 @@ describe("Lexer test suite", () => {
       eof(),
     ]
 
-    for (const token of expectedTokens) {
-      expect(lexer.nextToken()).toEqual(token)
-    }
+    expect(lexer.lex(input)).toEqual(expectedTokens)
   })
 
   test("tokens that are more than one character", () => {
@@ -200,7 +193,7 @@ describe("Lexer test suite", () => {
       10 != 9;
     `
 
-    const lexer = new Lexer(input)
+    const lexer = new Lexer()
 
     const expectedTokens = [
       number("10"),
@@ -214,8 +207,6 @@ describe("Lexer test suite", () => {
       eof(),
     ]
 
-    for (const token of expectedTokens) {
-      expect(lexer.nextToken()).toEqual(token)
-    }
+    expect(lexer.lex(input)).toEqual(expectedTokens)
   })
 })

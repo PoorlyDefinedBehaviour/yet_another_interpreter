@@ -20,6 +20,7 @@ import {
   Token,
   equal,
   notEqual,
+  TokenType,
 } from "./token"
 
 export class Lexer {
@@ -29,15 +30,14 @@ export class Lexer {
 
   private currentCharacter: string
 
-  constructor(private readonly sourceCode: string) {
-    this.readCharacter()
-  }
+  private sourceCode: string
+
+  private isAtEnd = () => this.nextPosition >= this.sourceCode.length
 
   private readCharacter = () => {
-    this.currentCharacter =
-      this.nextPosition >= this.sourceCode.length
-        ? ""
-        : this.sourceCode[this.nextPosition]
+    this.currentCharacter = this.isAtEnd()
+      ? ""
+      : this.sourceCode[this.nextPosition]
 
     this.position = this.nextPosition
 
@@ -82,14 +82,14 @@ export class Lexer {
   }
 
   private peekCharacter = (offset = 0) => {
-    if (this.nextPosition >= this.sourceCode.length) {
+    if (this.isAtEnd()) {
       return ""
     }
 
     return this.sourceCode[this.nextPosition + offset]
   }
 
-  public nextToken = (): Token => {
+  private nextToken = (): Token => {
     let token: Token
 
     this.skipWhitespace()
@@ -132,7 +132,7 @@ export class Lexer {
       } else {
         token = bang()
       }
-    } else if (this.currentCharacter === "") {
+    } else if (!this.currentCharacter) {
       token = eof()
     } else {
       if (this.isAlpha(this.currentCharacter)) {
@@ -148,5 +148,24 @@ export class Lexer {
     this.readCharacter()
 
     return token
+  }
+
+  public lex = (sourceCode: string): Token[] => {
+    this.sourceCode = sourceCode
+
+    this.readCharacter()
+
+    const tokens: Token[] = []
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const token = this.nextToken()
+
+      tokens.push(token)
+
+      if (token.type === TokenType.eof) {
+        return tokens
+      }
+    }
   }
 }
