@@ -13,7 +13,7 @@ module.exports = {
   },
   coverageDirectory: "./coverage",
   coveragePathIgnorePatterns: ["/node_modules/"],
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+  moduleFileExtensions: ["ts", "js", "json", "node"],
   moduleDirectories: ["node_modules", "src"],
   verbose: false,
   silent: false,
