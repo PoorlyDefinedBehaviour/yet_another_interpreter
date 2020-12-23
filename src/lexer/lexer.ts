@@ -94,8 +94,6 @@ export class Lexer {
 
     this.skipWhitespace()
 
-    console.log("this.currentCharacter", this.currentCharacter)
-
     if (this.currentCharacter === "=") {
       if (this.peekCharacter() === "=") {
         this.readCharacter()

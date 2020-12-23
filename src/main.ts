@@ -1,1 +1,3 @@
-const foo = 10
+import * as repl from "./repl"
+
+repl.loop()
