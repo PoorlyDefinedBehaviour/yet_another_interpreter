@@ -1,0 +1,116 @@
+import {
+  assign,
+  comma,
+  eof,
+  illegal,
+  leftBrace,
+  leftParen,
+  lookupIdentifier,
+  number,
+  plus,
+  rightBrace,
+  rightParen,
+  semicolon,
+  Token,
+} from "./token"
+
+export class Lexer {
+  private position = 0
+
+  private nextPosition = 0
+
+  private currentCharacter: string
+
+  constructor(private readonly sourceCode: string) {
+    this.readCharacter()
+  }
+
+  private readCharacter = () => {
+    this.currentCharacter =
+      this.nextPosition >= this.sourceCode.length
+        ? ""
+        : this.sourceCode[this.nextPosition]
+
+    this.position = this.nextPosition
+
+    this.nextPosition += 1
+  }
+
+  private isAlpha = (character: string) =>
+    (character >= "a" && character <= "z") ||
+    (character >= "A" && character <= "Z") ||
+    character === "_" ||
+    character === "?" ||
+    character === "!"
+
+  private readIdentifier = () => {
+    const identifierStartsAt = this.position
+
+    while (this.isAlpha(this.currentCharacter)) {
+      this.readCharacter()
+    }
+
+    return this.sourceCode.slice(identifierStartsAt, this.position)
+  }
+
+  private skipWhitespace = () => {
+    const whitespaceCharacters = [" ", "\t", "\n", "\r"]
+
+    while (whitespaceCharacters.includes(this.currentCharacter)) {
+      this.readCharacter()
+    }
+  }
+
+  private isNumber = (character: string) => character >= "0" && character <= "9"
+
+  private readNumber = () => {
+    const numberStartsAt = this.position
+
+    while (this.isNumber(this.currentCharacter)) {
+      this.readCharacter()
+    }
+
+    return this.sourceCode.slice(numberStartsAt, this.position)
+  }
+
+  public nextToken = (): Token => {
+    let token: Token
+
+    this.skipWhitespace()
+
+    console.log("this.currentCharacter", this.currentCharacter)
+
+    if (this.currentCharacter === "=") {
+      token = assign()
+    } else if (this.currentCharacter === ";") {
+      token = semicolon()
+    } else if (this.currentCharacter === "(") {
+      token = leftParen()
+    } else if (this.currentCharacter === ")") {
+      token = rightParen()
+    } else if (this.currentCharacter === ",") {
+      token = comma()
+    } else if (this.currentCharacter === "+") {
+      token = plus()
+    } else if (this.currentCharacter === "{") {
+      token = leftBrace()
+    } else if (this.currentCharacter === "}") {
+      token = rightBrace()
+    } else if (this.currentCharacter === "") {
+      token = eof()
+    } else {
+      if (this.isAlpha(this.currentCharacter)) {
+        return lookupIdentifier(this.readIdentifier())
+      }
+      if (this.isNumber(this.currentCharacter)) {
+        return number(this.readNumber())
+      }
+
+      return illegal(this.currentCharacter)
+    }
+
+    this.readCharacter()
+
+    return token
+  }
+}
